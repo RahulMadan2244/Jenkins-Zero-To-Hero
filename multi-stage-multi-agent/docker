@@ -2,8 +2,8 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_IMAGE = 'my-ubuntu-image'
-        CONTAINER_NAME = 'my-ubuntu-container'
+        DOCKERFILE_PATH = 'Dockerfile' // Path to Dockerfile in the Jenkins workspace
+        DOCKER_IMAGE_NAME = 'my-ubuntu-image' // Name for the Docker image
     }
     
     stages {
@@ -11,27 +11,8 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    sh "docker build -t $DOCKER_IMAGE ."
+                    docker.build(DOCKER_IMAGE_NAME, "-f ${DOCKERFILE_PATH} .")
                 }
-            }
-        }
-        
-        stage('Run Docker Container') {
-            steps {
-                script {
-                    // Run Docker container from the built image
-                    sh "docker run -d --name $CONTAINER_NAME $DOCKER_IMAGE tail -f /dev/null"
-                }
-            }
-        }
-    }
-    
-    post {
-        always {
-            // Clean up: stop and remove the container after the pipeline execution
-            script {
-                sh "docker stop $CONTAINER_NAME"
-                sh "docker rm $CONTAINER_NAME"
             }
         }
     }
