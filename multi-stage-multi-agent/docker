@@ -2,7 +2,8 @@ pipeline {
     agent any
     
     environment {
-        // Define environment variables if needed
+        DOCKER_IMAGE = 'my-ubuntu-image'
+        CONTAINER_NAME = 'my-ubuntu-container'
     }
     
     stages {
@@ -10,7 +11,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    docker.build('my-image-name')
+                    sh "docker build -t $DOCKER_IMAGE ."
                 }
             }
         }
@@ -19,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Run Docker container from the built image
-                    docker.image('my-image-name').run('-d -p 8080:8080', 'my-container-name')
+                    sh "docker run -d --name $CONTAINER_NAME $DOCKER_IMAGE tail -f /dev/null"
                 }
             }
         }
@@ -29,8 +30,8 @@ pipeline {
         always {
             // Clean up: stop and remove the container after the pipeline execution
             script {
-                docker.container('my-container-name').stop()
-                docker.container('my-container-name').remove(force: true)
+                sh "docker stop $CONTAINER_NAME"
+                sh "docker rm $CONTAINER_NAME"
             }
         }
     }
