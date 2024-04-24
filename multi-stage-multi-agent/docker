@@ -24,4 +24,14 @@ pipeline {
             }
         }
     }
+    
+    post {
+        always {
+            // Clean up: stop and remove the container after the pipeline execution
+            script {
+                docker.container('my-container-name').stop()
+                docker.container('my-container-name').remove(force: true)
+            }
+        }
+    }
 }
