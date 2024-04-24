@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+    
+    environment {
+        // Define environment variables if needed
+    }
+    
+    stages {
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    docker.build('my-image-name')
+                }
+            }
+        }
+        
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    // Run Docker container from the built image
+                    docker.image('my-image-name').run('-d -p 8080:8080', 'my-container-name')
+                }
+            }
+        }
+    }
